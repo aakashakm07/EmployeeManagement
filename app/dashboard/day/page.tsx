@@ -70,12 +70,13 @@ export default function DayBookPage() {
   // Totals
   // ======================
 
-  const totalCredit = transactions
-    .filter((t) => t.type === "Credit")
-    .reduce(
-      (sum, t) => sum + t.amount,
-      0
-    );
+  const safeTransactions = Array.isArray(transactions)
+  ? transactions
+  : [];
+
+const totalCredit = safeTransactions
+  .filter((t) => t.type === "Credit")
+  .reduce((sum, t) => sum + t.amount, 0);
 
   const totalDebit = transactions
     .filter((t) => t.type === "Debit")
