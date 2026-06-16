@@ -6,7 +6,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
-  DialogDescription
+  DialogDescription,
 } from "@/components/ui/dialog";
 
 import { Button } from "@/components/ui/button";
@@ -14,9 +14,7 @@ import { Employee } from "@/types/employee";
 
 type Props = {
   open: boolean;
-  setOpen: (
-    v: boolean
-  ) => void;
+  setOpen: (v: boolean) => void;
 
   employees: Employee[];
 
@@ -26,10 +24,7 @@ type Props = {
   >;
 
   setBulkAttendance: (
-    v: Record<
-      string,
-      boolean
-    >
+    v: Record<string, boolean>
   ) => void;
 
   onSave: () => void;
@@ -43,119 +38,121 @@ export default function AttendanceDialog({
   setBulkAttendance,
   onSave,
 }: Props) {
+  const handleAttendanceChange = (
+    employeeId: string,
+    value: boolean
+  ) => {
+    setBulkAttendance({
+      ...bulkAttendance,
+      [employeeId]: value,
+    });
+  };
+
   return (
     <Dialog
       open={open}
-      onOpenChange={
-        setOpen
-      }
+      onOpenChange={setOpen}
     >
-      <DialogContent className="max-w-xl">
+      <DialogContent className="max-w-2xl">
         <DialogHeader>
-  <DialogTitle>
-    Mark Attendance
-  </DialogTitle>
+          <DialogTitle>
+            Mark Attendance
+          </DialogTitle>
 
-  <DialogDescription>
-    Mark employee attendance for the selected date.
-  </DialogDescription>
-</DialogHeader>
+          <DialogDescription>
+            Mark attendance for all
+            employees and click Save.
+          </DialogDescription>
+        </DialogHeader>
 
-        <div className="space-y-3 max-h-[350px] overflow-auto">
-
-          {employees.map(
-            (emp) => (
+        <div className="max-h-[450px] overflow-y-auto space-y-3">
+          {employees.length === 0 ? (
+            <div className="text-center text-sm text-muted-foreground py-6">
+              No employees found
+            </div>
+          ) : (
+            employees.map((emp) => (
               <div
-                key={
-                  emp._id
-                }
-                className="flex items-center justify-between border rounded-lg p-3"
+                key={emp._id}
+                className="flex items-center justify-between border rounded-lg p-4"
               >
                 <div>
                   <p className="font-medium">
-                    {
-                      emp.name
-                    }
+                    {emp.name}
                   </p>
 
-                  <p className="text-xs text-muted-foreground">
-                    {
-                      emp.site
-                    }
+                  <p className="text-sm text-muted-foreground">
+                    {emp.site}
+                  </p>
+
+                  <p className="text-xs text-muted-foreground capitalize">
+                    {emp.job}
                   </p>
                 </div>
 
-                <div className="flex gap-5">
-
-                  <label className="flex items-center gap-1">
-
+                <div className="flex items-center gap-6">
+                  {/* Present */}
+                  <label className="flex items-center gap-2 cursor-pointer">
                     <input
                       type="radio"
-                      name={`att-${emp._id}`}
+                      name={`attendance-${emp._id}`}
                       checked={
                         bulkAttendance[
-                          emp._id ||
-                            ""
-                        ] ===
-                        true
+                          emp._id || ""
+                        ] === true
                       }
                       onChange={() =>
-                        setBulkAttendance(
-                          {
-                            ...bulkAttendance,
-                            [
-                              emp._id ||
-                                ""
-                            ]:
-                              true,
-                          }
+                        handleAttendanceChange(
+                          emp._id || "",
+                          true
                         )
                       }
                     />
 
-                    P
+                    <span className="text-green-600 font-medium">
+                      Present
+                    </span>
                   </label>
 
-                  <label className="flex items-center gap-1">
-
+                  {/* Absent */}
+                  <label className="flex items-center gap-2 cursor-pointer">
                     <input
                       type="radio"
-                      name={`att-${emp._id}`}
+                      name={`attendance-${emp._id}`}
                       checked={
                         bulkAttendance[
-                          emp._id ||
-                            ""
-                        ] ===
-                        false
+                          emp._id || ""
+                        ] === false
                       }
                       onChange={() =>
-                        setBulkAttendance(
-                          {
-                            ...bulkAttendance,
-                            [
-                              emp._id ||
-                                ""
-                            ]:
-                              false,
-                          }
+                        handleAttendanceChange(
+                          emp._id || "",
+                          false
                         )
                       }
                     />
 
-                    A
+                    <span className="text-red-600 font-medium">
+                      Absent
+                    </span>
                   </label>
                 </div>
               </div>
-            )
+            ))
           )}
         </div>
 
         <DialogFooter>
           <Button
-            onClick={
-              onSave
+            variant="outline"
+            onClick={() =>
+              setOpen(false)
             }
           >
+            Cancel
+          </Button>
+
+          <Button onClick={onSave}>
             Save Attendance
           </Button>
         </DialogFooter>

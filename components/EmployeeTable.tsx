@@ -51,9 +51,7 @@ export default function EmployeeTable({
             <th className="p-3 text-left">
               Job
             </th>
-            <th className="p-3 text-center">
-              Attendance
-            </th>
+           
             <th className="p-3 text-center">
               Salary
             </th>
@@ -99,14 +97,7 @@ export default function EmployeeTable({
                     {emp.job}
                   </td>
 
-                  <td className="p-3 text-center">
-                    {status ===
-                    undefined
-                      ? "-"
-                      : status
-                      ? "P"
-                      : "A"}
-                  </td>
+                  
 
                   <td className="p-3 text-center font-bold text-green-600">
                     ₹

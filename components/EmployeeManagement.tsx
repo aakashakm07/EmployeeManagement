@@ -208,46 +208,53 @@ export default function EmployeeManagement() {
       );
     };
 
-  // ATTENDANCE SAVE
-  const saveAttendance =
-    () => {
-      const updated =
-        {
-          ...attendance,
-        };
+  // ATTENDANCE SAVE ===========================
+ const saveAttendance = async () => {
+  try {
+    const records = Object.entries(
+      bulkAttendance
+    ).map(([employeeId, value]) => ({
+      employeeId,
+      date: selectedDate,
+      status: value
+        ? "Present"
+        : "Absent",
+    }));
 
-      Object.entries(
-        bulkAttendance
-      ).forEach(
-        ([
-          id,
-          val,
-        ]) => {
-          if (
-            !updated[
-              id
-            ]
-          ) {
-            updated[
-              id
-            ] = {};
-          }
+    const res = await fetch(
+      "/api/attendance",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type":
+            "application/json",
+        },
+        body: JSON.stringify({
+          records,
+        }),
+      }
+    );
 
-          updated[id][
-            selectedDate
-          ] = val;
-        }
+    if (!res.ok) {
+      throw new Error(
+        "Failed to save attendance"
       );
+    }
 
-      setAttendance(
-        updated
-      );
+    setOpenAttendance(false);
 
-      setOpenAttendance(
-        false
-      );
-    };
+    alert(
+      "Attendance saved successfully"
+    );
+  } catch (error) {
+    console.error(error);
 
+    alert(
+      "Failed to save attendance"
+    );
+  }
+};
+// ==============================================================
   const sites =
     useMemo(() => {
       const unique =

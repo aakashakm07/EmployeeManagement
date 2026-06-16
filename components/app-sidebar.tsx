@@ -39,8 +39,8 @@ const data = {
          
         },
         {
-          title: "Attendence Records",
-          url: "/dashboard/attendence",
+          title: "Attendance Records",
+          url: "/dashboard/attendance",
          
         },
        
