@@ -252,7 +252,7 @@ export default function TransactionList({
       {/* Mobile Bottom Nav */}
       <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t h-20 flex justify-around items-center z-50">
 
-        <button className="flex flex-col items-center text-slate-500 text-xs">
+        {/* <button className="flex flex-col items-center text-slate-500 text-xs">
           <Home size={20} />
           Home
         </button>
@@ -270,7 +270,7 @@ export default function TransactionList({
         <button className="flex flex-col items-center text-slate-500 text-xs">
           <MoreHorizontal size={20} />
           More
-        </button>
+        </button> */}
 
         <button
           onClick={onAdd}

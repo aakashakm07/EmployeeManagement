@@ -2,14 +2,35 @@ import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import Attendance from "@/models/Attendance";
 
-export async function GET() {
-  return NextResponse.json(
-    {
-      success: true,
-      message: "Attendance API Working",
-    },
-    { status: 200 }
-  );
+export async function GET(req: Request) {
+  try {
+    await connectDB();
+
+    const { searchParams } =
+      new URL(req.url);
+
+    const date =
+      searchParams.get("date");
+
+    const data =
+      await Attendance.find({
+        date,
+      });
+
+    return NextResponse.json(
+      data
+    );
+  } catch (error) {
+    return NextResponse.json(
+      {
+        message:
+          "Error",
+      },
+      {
+        status: 500,
+      }
+    );
+  }
 }
 
 export async function POST(

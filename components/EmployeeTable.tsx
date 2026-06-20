@@ -10,14 +10,6 @@ import { Employee } from "@/types/employee";
 
 type Props = {
   employees: Employee[];
-  attendance: Record<
-    string,
-    Record<
-      string,
-      boolean
-    >
-  >;
-  selectedDate: string;
   onEdit: (
     emp: Employee
   ) => void;
@@ -28,8 +20,6 @@ type Props = {
 
 export default function EmployeeTable({
   employees,
-  attendance,
-  selectedDate,
   onEdit,
   onDelete,
 }: Props) {
@@ -64,13 +54,7 @@ export default function EmployeeTable({
         <tbody>
           {employees.map(
             (emp) => {
-              const status =
-                attendance[
-                  emp._id ||
-                    ""
-                ]?.[
-                  selectedDate
-                ];
+             
 
               return (
                 <tr
@@ -101,9 +85,9 @@ export default function EmployeeTable({
 
                   <td className="p-3 text-center font-bold text-green-600">
                     ₹
-                    {status
-                      ? emp.salary
-                      : 0}
+                    {
+                       emp.salary
+                       }
                   </td>
 
                   <td className="p-3">

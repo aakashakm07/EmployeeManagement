@@ -39,6 +39,10 @@ export default function EmployeeManagement() {
 
   const [siteFilter, setSiteFilter] =
     useState("ALL");
+    const [markedEmployees, setMarkedEmployees] =
+  useState<string[]>([]);
+
+   
 
   const [selectedDate, setSelectedDate] =
     useState(
@@ -46,15 +50,30 @@ export default function EmployeeManagement() {
         .toISOString()
         .split("T")[0]
     );
+    useEffect(() => {
+  fetchAttendance();
+}, [selectedDate]);
 
-  const [attendance, setAttendance] =
-    useState<
-      Record<
-        string,
-        Record<string, boolean>
-      >
-    >({});
+const fetchAttendance =
+  async () => {
+    const res =
+      await fetch(
+        `/api/attendance?date=${selectedDate}`
+      );
 
+    const data =
+      await res.json();
+
+    setMarkedEmployees(
+      data.map(
+        (item: any) =>
+          item.employeeId
+      )
+    );
+  };
+   
+
+  
   const [bulkAttendance, setBulkAttendance] =
     useState<
       Record<
@@ -209,7 +228,7 @@ export default function EmployeeManagement() {
     };
 
   // ATTENDANCE SAVE ===========================
- const saveAttendance = async () => {
+const saveAttendance = async () => {
   try {
     const records = Object.entries(
       bulkAttendance
@@ -241,6 +260,13 @@ export default function EmployeeManagement() {
       );
     }
 
+    // MongoDB se latest attendance reload
+    await fetchAttendance();
+
+    // Radio reset
+    setBulkAttendance({});
+
+    // Dialog close
     setOpenAttendance(false);
 
     alert(
@@ -254,6 +280,8 @@ export default function EmployeeManagement() {
     );
   }
 };
+
+   
 // ==============================================================
   const sites =
     useMemo(() => {
@@ -340,21 +368,18 @@ export default function EmployeeManagement() {
               boolean
             > = {};
 
-          employees.forEach(
-            (emp) => {
-              initial[
-                emp._id ||
-                  ""
-              ] =
-                attendance[
-                  emp._id ||
-                    ""
-                ]?.[
-                  selectedDate
-                ] ??
-                false;
-            }
-          );
+         employees
+  .filter(
+    (emp) =>
+      !markedEmployees.includes(
+        emp._id || ""
+      )
+  )
+  .forEach((emp) => {
+    initial[
+      emp._id || ""
+    ] = false;
+  });
 
           setBulkAttendance(
             initial
@@ -372,30 +397,24 @@ export default function EmployeeManagement() {
       />
 
       <EmployeeTable
-        employees={
-          filteredEmployees
-        }
-        attendance={
-          attendance
-        }
-        selectedDate={
-          selectedDate
-        }
-        onEdit={(
-          emp
-        ) => {
-          setSelectedEmp(
-            emp
-          );
+  employees={
+    filteredEmployees
+  }
+  onEdit={(
+    emp
+  ) => {
+    setSelectedEmp(
+      emp
+    );
 
-          setOpenEdit(
-            true
-          );
-        }}
-        onDelete={
-          handleDelete
-        }
-      />
+    setOpenEdit(
+      true
+    );
+  }}
+  onDelete={
+    handleDelete
+  }
+/>
 
       {/* ADD */}
       <Dialog
@@ -446,25 +465,30 @@ export default function EmployeeManagement() {
 
       {/* ATTENDANCE */}
       <AttendanceDialog
-        open={
-          openAttendance
-        }
-        setOpen={
-          setOpenAttendance
-        }
-        employees={
-          employees
-        }
-        bulkAttendance={
-          bulkAttendance
-        }
-        setBulkAttendance={
-          setBulkAttendance
-        }
-        onSave={
-          saveAttendance
-        }
-      />
+  open={
+    openAttendance
+  }
+  setOpen={
+    setOpenAttendance
+  }
+  employees={
+  employees.filter(
+    (emp) =>
+      !markedEmployees.includes(
+        emp._id || ""
+      )
+  )
+}
+  bulkAttendance={
+    bulkAttendance
+  }
+  setBulkAttendance={
+    setBulkAttendance
+  }
+  onSave={
+    saveAttendance
+  }
+/>
     </div>
   );
 }
