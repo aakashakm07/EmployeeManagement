@@ -121,7 +121,7 @@ export default function TransactionList({
 
             <button
               onClick={onAdd}
-              className="bg-blue-600 text-white px-4 py-2 rounded-xl flex items-center gap-2 hover:bg-blue-700"
+              className="bg-blue-600  hidden lg:flex text-white px-4 py-2 rounded-xl  items-center gap-2 hover:bg-blue-700"
             >
               <Plus size={18} />
               Add
